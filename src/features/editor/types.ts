@@ -448,7 +448,7 @@ export interface LayersState {
 
   addSectionalLayer: (
     parentGlobalId: string,
-    name?: string
+    name?: string,
   ) => Promise<string | null>;
   getActiveSectionalLayer: () => Layer | null;
   setActiveSectionalLayer: (id: string | null) => void;
@@ -462,7 +462,7 @@ export interface LayersState {
   setCanvas: (canvas: fabric.Canvas) => void;
   setBrushMode: (
     enabled: boolean,
-    activeSectionalLayerId?: string | null
+    activeSectionalLayerId?: string | null,
   ) => void;
 
   addLayer: () => void;
@@ -470,7 +470,7 @@ export interface LayersState {
   updateLayer: (
     id: string,
     updates: Partial<Layer>,
-    addToHistory?: boolean
+    addToHistory?: boolean,
   ) => void;
   undo: () => void;
   redo: () => void;
@@ -480,17 +480,17 @@ export interface LayersState {
     type: OperationType,
     forward: OperationData,
     backward: OperationData,
-    batchId?: string
+    batchId?: string,
   ) => CanvasOperation;
 
   applyOperation: (
     operation: CanvasOperation,
-    direction: "forward" | "backward"
+    direction: "forward" | "backward",
   ) => Promise<void>;
 
   restoreObjectToCanvas: (
     objectData: LayerObjectData,
-    layerId: string
+    layerId: string,
   ) => Promise<void>;
   syncLayerObjectsFromCanvas: (layerId: string) => void;
 
@@ -517,7 +517,7 @@ export interface LayersState {
 
   createTransaction: (
     name: string,
-    operations: CanvasOperation[]
+    operations: CanvasOperation[],
   ) => CanvasTransaction;
   executeTransaction: (transaction: CanvasTransaction) => Promise<void>;
   currentTransaction: CanvasTransaction | null;
@@ -528,7 +528,7 @@ export interface LayersState {
 
   restoreFromSnapshot: (
     layers: Layer[],
-    canvasConfig: { width: number; height: number; backgroundColor: string }
+    canvasConfig: { width: number; height: number; backgroundColor: string },
   ) => void;
 }
 

@@ -35,7 +35,7 @@ function createMockImage(
   prompt: string,
   width: number = 512,
   height: number = 512,
-  isInpaint: boolean = false
+  isInpaint: boolean = false,
 ): string {
   // Always use the simple server-side approach since this is an API route
   return generateSimpleMockImage(prompt, width, height, isInpaint);
@@ -46,7 +46,7 @@ function generateSimpleMockImage(
   prompt: string,
   width: number,
   height: number,
-  isInpaint: boolean
+  isInpaint: boolean,
 ): string {
   // Create a simple SVG that we'll convert to base64
   const bgColor = isInpaint ? "#e6f3ff" : "#f0f9ff";
@@ -122,10 +122,10 @@ app.post(
           success: false,
           error: `Mock image generation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
         },
-        500
+        500,
       );
     }
-  }
+  },
 );
 
 // POST /api/ai/inpaint
@@ -160,10 +160,10 @@ app.post(
           success: false,
           error: `Mock inpainting failed: ${error instanceof Error ? error.message : "Unknown error"}`,
         },
-        500
+        500,
       );
     }
-  }
+  },
 );
 
 // POST /api/ai/remove-bg (keeping this for completeness)
@@ -174,7 +174,7 @@ app.post(
     "json",
     z.object({
       image: z.string(),
-    })
+    }),
   ),
   async (c) => {
     try {
@@ -186,7 +186,7 @@ app.post(
         "Background Removed",
         512,
         512,
-        false
+        false,
       );
 
       return c.json({
@@ -200,10 +200,10 @@ app.post(
           success: false,
           error: `Mock background removal failed: ${error instanceof Error ? error.message : "Unknown error"}`,
         },
-        500
+        500,
       );
     }
-  }
+  },
 );
 
 export default app;
