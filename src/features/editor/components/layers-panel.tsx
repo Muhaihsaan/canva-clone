@@ -69,7 +69,7 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
     });
 
     return flattenedLayers;
-  }, [layers, getLayerTree]);
+  }, [getLayerTree]);
 
   const handleSelectLayer = (layer: Layer) => {
     selectLayer(layer.id);
@@ -170,7 +170,12 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
         {/* Thumbnail */}
         {thumbnail ? (
           <div className="relative w-8 h-8 rounded-sm mr-2 bg-gray-600 flex-shrink-0 overflow-hidden">
-            <img src={thumbnail} alt={layer.name} className="object-cover" />
+            <Image
+              fill
+              src={thumbnail}
+              alt={layer.name}
+              className="object-cover"
+            />
           </div>
         ) : (
           <div className={cn("w-8 h-8 rounded-sm mr-2", "bg-gray-600")} />
