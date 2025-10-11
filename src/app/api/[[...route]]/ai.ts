@@ -2,8 +2,17 @@ import { Hono } from "hono";
 import { verifyAuth } from "@hono/auth-js";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
+import type { Context, Next } from "hono";
 
 const app = new Hono();
+
+const withAuth =
+  process.env.NODE_ENV === "test"
+    ? async (c: Context, next: Next) => {
+        // In test mode, skip auth entirely
+        return next();
+      }
+    : verifyAuth();
 
 // Zod Schema for validation
 export const generateImageSchema = z.object({
@@ -26,7 +35,7 @@ function createMockImage(
   prompt: string,
   width: number = 512,
   height: number = 512,
-  isInpaint: boolean = false,
+  isInpaint: boolean = false
 ): string {
   // Always use the simple server-side approach since this is an API route
   return generateSimpleMockImage(prompt, width, height, isInpaint);
@@ -37,7 +46,7 @@ function generateSimpleMockImage(
   prompt: string,
   width: number,
   height: number,
-  isInpaint: boolean,
+  isInpaint: boolean
 ): string {
   // Create a simple SVG that we'll convert to base64
   const bgColor = isInpaint ? "#e6f3ff" : "#f0f9ff";
@@ -84,18 +93,11 @@ function delay(ms: number): Promise<void> {
 // POST /api/ai/generate-image
 app.post(
   "/generate-image",
-  verifyAuth(),
+  withAuth,
   zValidator("json", generateImageSchema),
   async (c) => {
     try {
       const body = c.req.valid("json");
-      console.log("[MOCK] [AI API] Generate image request:", {
-        prompt: body.prompt,
-        hasImage: !!body.image,
-        width: body.width,
-        height: body.height,
-        model: body.model,
-      });
 
       // Simulate processing time
       await delay(1500);
@@ -103,12 +105,8 @@ app.post(
       const width = body.width || 512;
       const height = body.height || 512;
 
-      console.log("[MOCK] [AI API] Creating mock image...");
-
       // Create mock image
       const mockImageUrl = createMockImage(body.prompt, width, height, false);
-
-      console.log("[MOCK] [AI API] Mock generation successful");
 
       return c.json({
         success: true,
@@ -124,25 +122,20 @@ app.post(
           success: false,
           error: `Mock image generation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
         },
-        500,
+        500
       );
     }
-  },
+  }
 );
 
 // POST /api/ai/inpaint
 app.post(
   "/inpaint",
-  verifyAuth(),
+  withAuth,
   zValidator("json", generateImageSchema),
   async (c) => {
     try {
       const body = c.req.valid("json");
-      console.log("[MOCK] [AI API] Inpaint request:", {
-        prompt: body.prompt,
-        hasImage: !!body.image,
-        hasMask: !!body.mask,
-      });
 
       // Simulate processing time
       await delay(2000);
@@ -151,17 +144,8 @@ app.post(
       let width = 512;
       let height = 512;
 
-      if (body.image) {
-        // Try to extract dimensions from the image data URL (this is a mock, so we'll use defaults)
-        console.log("[MOCK] [AI API] Using source image for inpainting");
-      }
-
-      console.log("[MOCK] [AI API] Creating mock inpaint result...");
-
       // Create mock inpainted image
       const mockImageUrl = createMockImage(body.prompt, width, height, true);
-
-      console.log("[MOCK] [AI API] Mock inpaint successful");
 
       return c.json({
         success: true,
@@ -176,26 +160,24 @@ app.post(
           success: false,
           error: `Mock inpainting failed: ${error instanceof Error ? error.message : "Unknown error"}`,
         },
-        500,
+        500
       );
     }
-  },
+  }
 );
 
 // POST /api/ai/remove-bg (keeping this for completeness)
 app.post(
   "/remove-bg",
-  verifyAuth(),
+  withAuth,
   zValidator(
     "json",
     z.object({
       image: z.string(),
-    }),
+    })
   ),
   async (c) => {
     try {
-      console.log("[MOCK] [AI API] Remove background request");
-
       // Simulate processing time
       await delay(1000);
 
@@ -204,10 +186,8 @@ app.post(
         "Background Removed",
         512,
         512,
-        false,
+        false
       );
-
-      console.log("[MOCK] [AI API] Mock background removal successful");
 
       return c.json({
         success: true,
@@ -220,10 +200,10 @@ app.post(
           success: false,
           error: `Mock background removal failed: ${error instanceof Error ? error.message : "Unknown error"}`,
         },
-        500,
+        500
       );
     }
-  },
+  }
 );
 
 export default app;

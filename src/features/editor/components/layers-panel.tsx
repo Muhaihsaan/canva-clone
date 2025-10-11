@@ -43,10 +43,10 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
 
   // Build hierarchical layer list with sectional layers
   const layerList = useMemo((): Layer[] => {
-    const layerTree = getLayerTree();
+    const tree = getLayerTree(layers);
     const flattenedLayers: Layer[] = [];
 
-    const allGlobals = layerTree.filter((l) => l.type === LayerType.Global);
+    const allGlobals = tree.filter((l) => l.type === LayerType.Global);
     const visibleGlobals = allGlobals.filter((layer) => layer.isVisible);
 
     // Reverse the order so top visual layer is at top of panel
@@ -69,7 +69,7 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
     });
 
     return flattenedLayers;
-  }, [getLayerTree]);
+  }, [layers, getLayerTree]);
 
   const handleSelectLayer = (layer: Layer) => {
     selectLayer(layer.id);
@@ -85,7 +85,7 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
 
   const handleDrop = (
     e: React.DragEvent<HTMLLIElement>,
-    dropTargetId: string,
+    dropTargetId: string
   ) => {
     e.preventDefault();
     if (!draggedId || draggedId === dropTargetId) return;
@@ -139,7 +139,7 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
             : "bg-secondary hover:bg-gray-600/50 text-gray-400 border-transparent",
           draggedId === layer.id && "opacity-50",
           isChild && "ml-6",
-          shouldReduceOpacity && "opacity-80",
+          shouldReduceOpacity && "opacity-80"
         )}
       >
         {/* Layer Type Icon */}
@@ -147,14 +147,14 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
           <Brush
             className={cn(
               "w-4 h-4 mr-2 flex-shrink-0",
-              isActive ? "text-white" : "text-orange-500",
+              isActive ? "text-white" : "text-orange-500"
             )}
           />
         ) : (
           <Folder
             className={cn(
               "w-4 h-4 mr-2 flex-shrink-0",
-              isActive ? "text-white" : "text-blue-500",
+              isActive ? "text-white" : "text-blue-500"
             )}
           />
         )}
@@ -163,7 +163,7 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
         <GripVertical
           className={cn(
             "w-4 h-4 mr-2 flex-shrink-0",
-            isActive ? "text-white" : "text-gray-500",
+            isActive ? "text-white" : "text-gray-500"
           )}
         />
 
@@ -196,7 +196,7 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
               "transition",
               isActive
                 ? "text-white hover:text-gray-200"
-                : "text-gray-400 hover:text-white",
+                : "text-gray-400 hover:text-white"
             )}
           >
             {layer.isVisible ? (
@@ -217,7 +217,7 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
                 "transition",
                 isActive
                   ? "text-white hover:text-red-300"
-                  : "text-gray-400 hover:text-red-500",
+                  : "text-gray-400 hover:text-red-500"
               )}
             >
               <Trash2 className="w-4 h-4" />
@@ -235,7 +235,7 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
       <div
         className={cn(
           "bg-white p-2 rounded-lg text-white h-full flex flex-col",
-          className,
+          className
         )}
       >
         <div className="flex justify-between items-center">
@@ -256,7 +256,7 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ className }) => {
     <div
       className={cn(
         "bg-white p-2 rounded-lg text-white h-full flex flex-col",
-        className,
+        className
       )}
     >
       {/* Header */}

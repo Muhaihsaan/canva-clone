@@ -64,7 +64,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
     type: OperationType,
     forward: OperationData,
     backward: OperationData,
-    batchId?: string,
+    batchId?: string
   ): CanvasOperation => ({
     id: uuidv4(),
     type,
@@ -80,7 +80,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
     // Clear future operations when executing a new one
     const newHistory: OperationHistory = {
       operations: [...operationHistory.operations, operation].slice(
-        -MAX_HISTORY,
+        -MAX_HISTORY
       ),
       future: [],
     };
@@ -93,7 +93,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
 
   applyOperation: async (
     operation: CanvasOperation,
-    direction: "forward" | "backward",
+    direction: "forward" | "backward"
   ) => {
     const data =
       direction === "forward" ? operation.forward : operation.backward;
@@ -132,12 +132,12 @@ export const useLayersStore = create<LayersState>((set, get) => ({
                     .getObjects()
                     .find(
                       (o) =>
-                        getObjectIdFromFabricObject(o) === objectData.objectId,
+                        getObjectIdFromFabricObject(o) === objectData.objectId
                     );
                   if (!existingObj) {
                     await get().restoreObjectToCanvas(
                       objectData,
-                      layerData.layer.id,
+                      layerData.layer.id
                     );
                   }
                 }
@@ -198,14 +198,14 @@ export const useLayersStore = create<LayersState>((set, get) => ({
           if (!existingObj) {
             // Check if target layer exists in store before restoration
             const targetLayer = get().layers.find(
-              (l) => l.id === objData.layerId,
+              (l) => l.id === objData.layerId
             );
             if (!targetLayer) {
               // Skip restoration - the object will be restored when the layer is created
             } else {
               await get().restoreObjectToCanvas(
                 objData.objectData,
-                objData.layerId,
+                objData.layerId
               );
               // Update layer objects array after canvas change
               get().syncLayerObjectsFromCanvas(objData.layerId);
@@ -217,7 +217,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
 
           // Find all objects with the same objectId (in case there are duplicates)
           const objectsToRemove = objects.filter(
-            (o) => (o as any).objectId === objData.objectId,
+            (o) => (o as any).objectId === objData.objectId
           );
 
           if (objectsToRemove.length > 0) {
@@ -237,7 +237,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
         if (direction === "forward" && canvas) {
           const objects = canvas.getObjects();
           const obj = objects.find(
-            (o) => (o as any).objectId === removeData.objectId,
+            (o) => (o as any).objectId === removeData.objectId
           );
           if (obj) {
             canvas.remove(obj);
@@ -248,7 +248,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
         } else if (canvas && removeData.objectData) {
           await get().restoreObjectToCanvas(
             removeData.objectData,
-            removeData.layerId,
+            removeData.layerId
           );
           // Update layer objects array after canvas change
           get().syncLayerObjectsFromCanvas(removeData.layerId);
@@ -261,7 +261,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
         if (canvas) {
           const objects = canvas.getObjects();
           const obj = objects.find(
-            (o) => (o as any).objectId === modifyData.objectId,
+            (o) => (o as any).objectId === modifyData.objectId
           );
           if (obj) {
             const changes =
@@ -282,7 +282,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
         if (canvas) {
           const objects = canvas.getObjects();
           const obj = objects.find(
-            (o) => (o as any).objectId === moveData.objectId,
+            (o) => (o as any).objectId === moveData.objectId
           );
           if (obj) {
             const position =
@@ -388,7 +388,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
               reject(error);
             }
           },
-          "fabric",
+          "fabric"
         );
       });
     } catch (error) {}
@@ -508,7 +508,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
     if (layer) {
       if (layer.type === LayerType.Sectional) {
         const inpaintingObjectsSerialized = layerObjects.filter(
-          (obj) => obj.type === "path",
+          (obj) => obj.type === "path"
         );
 
         if (inpaintingObjectsSerialized.length === 0) {
@@ -584,7 +584,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
 
   // Hierarchical Layer Management
   addGlobalLayer: async (
-    name = `Layer ${get().layers.filter((l) => l.type === LayerType.Global).length}`,
+    name = `Layer ${get().layers.filter((l) => l.type === LayerType.Global).length}`
   ) => {
     const newLayer: Layer = {
       id: uuidv4(),
@@ -604,7 +604,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
     const operation = get().createOperation(
       "ADD_LAYER",
       { layer: newLayer } as AddLayerData,
-      { layerId: newLayer.id } as RemoveLayerData,
+      { layerId: newLayer.id } as RemoveLayerData
     );
 
     await get().executeOperation(operation);
@@ -621,7 +621,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
         newLayerId: get().activeGlobalLayerId || "",
         layerType: "global",
         previousLayerId: newLayer.id,
-      } as SetActiveLayerData,
+      } as SetActiveLayerData
     );
 
     await get().executeOperation(setActiveOperation);
@@ -631,14 +631,14 @@ export const useLayersStore = create<LayersState>((set, get) => ({
   addSectionalLayer: async (parentGlobalId: string) => {
     // Verify parent exists and is global
     const parentLayer = get().layers.find(
-      (l) => l.id === parentGlobalId && l.type === LayerType.Global,
+      (l) => l.id === parentGlobalId && l.type === LayerType.Global
     );
     if (!parentLayer) {
       return null;
     }
 
     const existingSectionals = get().layers.filter(
-      (l) => l.type === LayerType.Sectional && l.parentId === parentGlobalId,
+      (l) => l.type === LayerType.Sectional && l.parentId === parentGlobalId
     );
     const nextNumber = existingSectionals.length + 1;
 
@@ -658,7 +658,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
     const operation = get().createOperation(
       "ADD_LAYER",
       { layer: newLayer } as AddLayerData,
-      { layerId: newLayer.id } as RemoveLayerData,
+      { layerId: newLayer.id } as RemoveLayerData
     );
 
     const setActiveOperation = get().createOperation(
@@ -672,7 +672,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
         newLayerId: get().activeSectionalLayerId || "",
         layerType: "sectional",
         previousLayerId: newLayer.id,
-      } as SetActiveLayerData,
+      } as SetActiveLayerData
     );
 
     // Check if there's an active transaction
@@ -699,8 +699,8 @@ export const useLayersStore = create<LayersState>((set, get) => ({
     set({ activeSectionalLayerId: id });
   },
 
-  getLayerTree: () => {
-    const { layers } = get();
+  getLayerTree: (layersArg?: Layer[]) => {
+    const layers = layersArg ?? get().layers;
     const globals = layers.filter((l) => l.type === LayerType.Global);
     const sectionals = layers.filter((l) => l.type === LayerType.Sectional);
 
@@ -714,7 +714,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
     const { layers, activeGlobalLayerId } = get();
     return (
       layers.find(
-        (l) => l.id === activeGlobalLayerId && l.type === LayerType.Global,
+        (l) => l.id === activeGlobalLayerId && l.type === LayerType.Global
       ) || null
     );
   },
@@ -727,11 +727,11 @@ export const useLayersStore = create<LayersState>((set, get) => ({
     }
 
     const globalLayers: Layer[] = layers.filter(
-      (layer: Layer): boolean => layer.type === LayerType.Global,
+      (layer: Layer): boolean => layer.type === LayerType.Global
     );
 
     const newActiveLayer: Layer | undefined = globalLayers.find(
-      (layer: Layer): boolean => layer.id === id,
+      (layer: Layer): boolean => layer.id === id
     );
 
     if (!newActiveLayer) {
@@ -743,7 +743,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
       (layer: Layer): Layer => ({
         ...layer,
         isActive: layer.id === id && layer.type === LayerType.Global,
-      }),
+      })
     );
 
     set({
@@ -795,7 +795,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
       if (layerToDeleteForCanvas.type === LayerType.Global) {
         const childSectionals = get()
           .layers.filter(
-            (l) => l.type === LayerType.Sectional && l.parentId === id,
+            (l) => l.type === LayerType.Sectional && l.parentId === id
           )
           .map((l) => l.id);
         layersToDelete = [...layersToDelete, ...childSectionals];
@@ -834,7 +834,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
       }
 
       const newLayers = state.layers.filter(
-        (l) => !layersToDelete.includes(l.id),
+        (l) => !layersToDelete.includes(l.id)
       );
       const newHistory = { ...state.history };
 
@@ -974,7 +974,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
           "ADD_LAYER",
           { layer: newLayer } as AddLayerData,
           { layerId: newLayer.id } as RemoveLayerData,
-          batchId,
+          batchId
         );
 
         await get().executeOperation(addLayerOperation);
@@ -1031,7 +1031,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
                     objectId: objectData.objectId,
                     objectData,
                   } as RemoveObjectData,
-                  batchId,
+                  batchId
                 );
 
                 await get().executeOperation(addObjectOperation);
@@ -1063,7 +1063,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
             newLayerId: get().activeGlobalLayerId || "",
             layerType: "global",
             previousLayerId: layerIds[layerIds.length - 1],
-          } as SetActiveLayerData,
+          } as SetActiveLayerData
         );
 
         get().executeOperation(setActiveOperation);
@@ -1076,7 +1076,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
 
     set((state) => {
       const updatedLayers = state.layers.map((l) =>
-        l.id === id ? { ...l, isVisible: !l.isVisible } : l,
+        l.id === id ? { ...l, isVisible: !l.isVisible } : l
       );
 
       // update canvas object visibility
@@ -1106,7 +1106,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
       if (!existingLayer) return state;
 
       const newLayers = state.layers.map((l) =>
-        l.id === id ? { ...l, ...updates } : l,
+        l.id === id ? { ...l, ...updates } : l
       );
 
       if (addToHistory && updates.objects) {
@@ -1152,7 +1152,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
 
     set({
       layers: layers.map((l) =>
-        l.id === activeGlobalLayerId ? { ...l, objects: previous } : l,
+        l.id === activeGlobalLayerId ? { ...l, objects: previous } : l
       ),
       history: {
         ...history,
@@ -1179,7 +1179,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
 
     set({
       layers: layers.map((l) =>
-        l.id === activeGlobalLayerId ? { ...l, objects: next } : l,
+        l.id === activeGlobalLayerId ? { ...l, objects: next } : l
       ),
       history: {
         ...history,
@@ -1246,7 +1246,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
 
   createTransaction: (
     name: string,
-    operations: CanvasOperation[],
+    operations: CanvasOperation[]
   ): CanvasTransaction => ({
     id: uuidv4(),
     name,
@@ -1260,13 +1260,13 @@ export const useLayersStore = create<LayersState>((set, get) => ({
     const transactionOperation = get().createOperation(
       "TRANSACTION",
       { transaction },
-      { transaction },
+      { transaction }
     );
 
     // Clear future operations when executing a new transaction
     const newHistory: OperationHistory = {
       operations: [...operationHistory.operations, transactionOperation].slice(
-        -MAX_HISTORY,
+        -MAX_HISTORY
       ),
       future: [],
     };
@@ -1324,7 +1324,7 @@ export const useLayersStore = create<LayersState>((set, get) => ({
   // Restore from snapshot
   restoreFromSnapshot: (
     layers: Layer[],
-    canvasConfig: { width: number; height: number; backgroundColor: string },
+    canvasConfig: { width: number; height: number; backgroundColor: string }
   ) => {
     // Set the first global layer as active
     const firstGlobalLayer = layers.find((l) => l.type === LayerType.Global);

@@ -49,7 +49,7 @@ export const AiSidebar = ({
   defaultTab = "global",
 }: AiSidebarProps) => {
   const [currentTab, setCurrentTab] = useState<"global" | "sectional">(
-    defaultTab,
+    defaultTab
   );
   const [isGenerating, setIsGenerating] = useState(false);
   const [brushSize, setBrushSize] = useState(20);
@@ -80,7 +80,7 @@ export const AiSidebar = ({
 
   const hasMaskPaths = useMemo(() => {
     const hasLayerPaths = currentLayer?.objects?.some(
-      (o: LayerObjectData) => o.type?.toLowerCase() === "path",
+      (o: LayerObjectData) => o.type?.toLowerCase() === "path"
     );
 
     if (!hasLayerPaths && editor?.canvas && currentLayer?.id) {
@@ -212,7 +212,7 @@ export const AiSidebar = ({
   };
 
   const handleReferenceImageUpload = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
     if (!file || !activeGlobalLayer) return;
@@ -227,7 +227,7 @@ export const AiSidebar = ({
       updateLayer(
         activeGlobalLayer.id,
         { referenceImageUrls: updatedReferenceUrls },
-        false,
+        false
       );
     };
     reader.readAsDataURL(file);
@@ -240,12 +240,12 @@ export const AiSidebar = ({
   const removeReferenceImage = (index: number) => {
     if (!activeGlobalLayer) return;
     const updatedReferenceUrls = activeGlobalLayer.referenceImageUrls.filter(
-      (_, i) => i !== index,
+      (_, i) => i !== index
     );
     updateLayer(
       activeGlobalLayer.id,
       { referenceImageUrls: updatedReferenceUrls },
-      false,
+      false
     );
   };
 
@@ -277,7 +277,7 @@ export const AiSidebar = ({
     } catch (error) {
       console.error("AI generation failed:", error);
       alert(
-        `AI generation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `AI generation failed: ${error instanceof Error ? error.message : "Unknown error"}`
       );
     } finally {
       setIsGenerating(false);
@@ -321,7 +321,7 @@ export const AiSidebar = ({
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        errorData.error || `HTTP ${response.status}: ${response.statusText}`,
+        errorData.error || `HTTP ${response.status}: ${response.statusText}`
       );
     }
 
@@ -362,7 +362,7 @@ export const AiSidebar = ({
         imageDataUrl: imageDataUrl,
         prompt: activeGlobalLayer.prompt,
       },
-      true,
+      true
     );
 
     // Load the generated image onto canvas
@@ -386,12 +386,12 @@ export const AiSidebar = ({
 
     // Get visible layers for compositing
     const visibleLayers = layers.filter(
-      (layer) => layer.isVisible && layer.objects && layer.objects.length > 0,
+      (layer) => layer.isVisible && layer.objects && layer.objects.length > 0
     );
 
     if (visibleLayers.length === 0) {
       throw new Error(
-        "No visible layers found for sectional generation. Please add some content to the canvas first.",
+        "No visible layers found for sectional generation. Please add some content to the canvas first."
       );
     }
 
@@ -405,7 +405,7 @@ export const AiSidebar = ({
       canvasWidth,
       canvasHeight,
       null,
-      { format: "png" },
+      { format: "png" }
     );
 
     if (!compositeImageUrl) {
@@ -421,13 +421,13 @@ export const AiSidebar = ({
       maskImageUrl = await generateMaskFromObjects(
         activeSectionalLayer.objects,
         canvasWidth,
-        canvasHeight,
+        canvasHeight
       );
     }
 
     if (!maskImageUrl) {
       throw new Error(
-        "No mask found for sectional generation. Please draw mask areas first.",
+        "No mask found for sectional generation. Please draw mask areas first."
       );
     }
 
@@ -439,7 +439,7 @@ export const AiSidebar = ({
 
     if (!boundingBox) {
       throw new Error(
-        "No content found in mask. Please draw mask areas first.",
+        "No content found in mask. Please draw mask areas first."
       );
     }
 
@@ -458,7 +458,7 @@ export const AiSidebar = ({
     // Crop the composite image to the exact mask bounding box area
     const croppedCompositeImageUrl = await cropImage(
       compositeImageUrl,
-      cropBox,
+      cropBox
     );
 
     // Crop the mask to the same exact area
@@ -484,7 +484,7 @@ export const AiSidebar = ({
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        errorData.error || `HTTP ${response.status}: ${response.statusText}`,
+        errorData.error || `HTTP ${response.status}: ${response.statusText}`
       );
     }
 
@@ -500,7 +500,7 @@ export const AiSidebar = ({
     const resizedGeneratedImage = await resizeImage(
       generatedImageUrl,
       cropBox.width,
-      cropBox.height,
+      cropBox.height
     );
 
     // Create a fabric.Image object positioned at the exact bounding box coordinates
@@ -523,7 +523,7 @@ export const AiSidebar = ({
           tagFabricObjectWithLayer(
             fabricImage,
             activeSectionalLayer.id,
-            `inpaint-generated-${Date.now()}`,
+            `inpaint-generated-${Date.now()}`
           );
 
           // Add to canvas
@@ -540,7 +540,7 @@ export const AiSidebar = ({
             {
               imageDataUrl: resizedGeneratedImage,
             },
-            true,
+            true
           );
 
           resolve();
@@ -559,7 +559,7 @@ export const AiSidebar = ({
 
   const loadImageToCanvas = async (
     imageDataUrl: string,
-    layerId: string,
+    layerId: string
   ): Promise<void> => {
     return new Promise((resolve, reject) => {
       if (!editor?.canvas) {
@@ -583,7 +583,7 @@ export const AiSidebar = ({
           tagFabricObjectWithLayer(
             fabricImage,
             layerId,
-            `generated-${Date.now()}`,
+            `generated-${Date.now()}`
           );
 
           // Add to canvas
@@ -638,7 +638,7 @@ export const AiSidebar = ({
         "absolute left-[100px] top-0 bg-white border-r z-[60] w-[360px] h-full flex flex-col shadow-lg",
         activeTool === "ai" || ["brush", "eraser", "pan"].includes(activeTool)
           ? "visible"
-          : "hidden",
+          : "hidden"
       )}
     >
       <ToolSidebarHeader
@@ -668,7 +668,7 @@ export const AiSidebar = ({
         {/* Global Tab Content */}
         {currentTab === "global" && (
           <div className="space-y-4">
-            <div className="space-y-2">
+            <div className="space-y-2 px-1">
               <label className="text-sm font-medium">Prompt</label>
               <Textarea
                 value={activeGlobalLayer.prompt || ""}
