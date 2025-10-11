@@ -96,7 +96,7 @@ export const useLocalAutosave = (): UseLocalAutosaveReturn => {
         const success = await restoreSnapshot(
           snapshot,
           currentCanvas,
-          restoreFromSnapshot
+          restoreFromSnapshot,
         );
 
         if (success) {
@@ -174,7 +174,7 @@ export const useLocalAutosave = (): UseLocalAutosaveReturn => {
         return false;
       }
     },
-    []
+    [],
   );
 
   // Canvas-Store sync validation
@@ -190,7 +190,7 @@ export const useLocalAutosave = (): UseLocalAutosaveReturn => {
 
       // Count layers that should have canvas objects
       const layersWithImages = layersToCheck.filter(
-        (layer) => layer.id !== "base-canvas" && layer.imageDataUrl
+        (layer) => layer.id !== "base-canvas" && layer.imageDataUrl,
       );
 
       const canvasObjectCount = canvasObjects.length;
@@ -204,7 +204,7 @@ export const useLocalAutosave = (): UseLocalAutosaveReturn => {
         isEmpty: canvasObjectCount === 0 && expectedObjectCount > 0,
       };
     },
-    []
+    [],
   );
 
   // Auto-load with canvas ready polling

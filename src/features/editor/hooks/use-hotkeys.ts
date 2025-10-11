@@ -70,7 +70,7 @@ export const useHotkeys = ({
       }
       return;
     }
-    
+
     // Undo
     if (isCtrlKey && event.key === "z") {
       event.preventDefault();
@@ -110,7 +110,7 @@ export const useHotkeys = ({
     if (isCtrlKey && event.key === "a") {
       event.preventDefault();
       const allObjects = (canvas?.getObjects() ?? []).filter(
-        (object) => object.selectable
+        (object) => object.selectable,
       );
       if (canvas && allObjects.length > 0) {
         const selection = new fabric.ActiveSelection(allObjects, { canvas });

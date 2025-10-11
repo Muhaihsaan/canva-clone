@@ -10,7 +10,7 @@ import {
  */
 function createImageError(
   code: ImageProcessingError["code"],
-  message: string
+  message: string,
 ): ImageProcessingError {
   const error = new Error(message) as ImageProcessingError;
   error.code = code;
@@ -31,14 +31,14 @@ export function fileToBase64(file: File): Promise<string> {
         reject(
           createImageError(
             "FILE_READ_ERROR",
-            "Failed to read file as a data URL."
-          )
+            "Failed to read file as a data URL.",
+          ),
         );
       }
     };
     reader.onerror = (): void => {
       reject(
-        createImageError("FILE_READ_ERROR", "FileReader encountered an error.")
+        createImageError("FILE_READ_ERROR", "FileReader encountered an error."),
       );
     };
     reader.readAsDataURL(file);
@@ -48,15 +48,15 @@ export function fileToBase64(file: File): Promise<string> {
 export function resizeImage(
   dataUrl: string,
   width: number,
-  height: number
+  height: number,
 ): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     if (width <= 0 || height <= 0) {
       reject(
         createImageError(
           "INVALID_DIMENSIONS",
-          "Width and height must be positive numbers."
-        )
+          "Width and height must be positive numbers.",
+        ),
       );
       return;
     }
@@ -74,8 +74,8 @@ export function resizeImage(
         reject(
           createImageError(
             "CANVAS_CONTEXT_ERROR",
-            "Could not get canvas context for resizing"
-          )
+            "Could not get canvas context for resizing",
+          ),
         );
         return;
       }
@@ -89,8 +89,8 @@ export function resizeImage(
       reject(
         createImageError(
           "IMAGE_LOAD_ERROR",
-          "Failed to load image for resizing."
-        )
+          "Failed to load image for resizing.",
+        ),
       );
     };
 
@@ -101,7 +101,7 @@ export function resizeImage(
 export function getBoundingBox(
   ctx: CanvasRenderingContext2D,
   width: number,
-  height: number
+  height: number,
 ): BoundingBox | null {
   if (width <= 0 || height <= 0) {
     return null;
@@ -134,15 +134,15 @@ export function getBoundingBox(
 
 export function getBoundingBoxFromDataUrl(
   dataUrl: string,
-  dimensions: ImageDimensions
+  dimensions: ImageDimensions,
 ): Promise<BoundingBox | null> {
   return new Promise<BoundingBox | null>((resolve, reject) => {
     if (dimensions.width <= 0 || dimensions.height <= 0) {
       reject(
         createImageError(
           "INVALID_DIMENSIONS",
-          "Width and height must be positive numbers."
-        )
+          "Width and height must be positive numbers.",
+        ),
       );
       return;
     }
@@ -160,8 +160,8 @@ export function getBoundingBoxFromDataUrl(
         reject(
           createImageError(
             "CANVAS_CONTEXT_ERROR",
-            "Could not get 2D context for bounding box calculation."
-          )
+            "Could not get 2D context for bounding box calculation.",
+          ),
         );
         return;
       }
@@ -174,8 +174,8 @@ export function getBoundingBoxFromDataUrl(
       reject(
         createImageError(
           "IMAGE_LOAD_ERROR",
-          "Failed to load image for bounding box calculation."
-        )
+          "Failed to load image for bounding box calculation.",
+        ),
       );
     };
 
@@ -189,8 +189,8 @@ export function cropImage(dataUrl: string, cropBox: CropBox): Promise<string> {
       reject(
         createImageError(
           "INVALID_DIMENSIONS",
-          "Crop box width and height must be positive numbers."
-        )
+          "Crop box width and height must be positive numbers.",
+        ),
       );
       return;
     }
@@ -199,8 +199,8 @@ export function cropImage(dataUrl: string, cropBox: CropBox): Promise<string> {
       reject(
         createImageError(
           "INVALID_DIMENSIONS",
-          "Crop box left and top must be non-negative."
-        )
+          "Crop box left and top must be non-negative.",
+        ),
       );
       return;
     }
@@ -218,8 +218,8 @@ export function cropImage(dataUrl: string, cropBox: CropBox): Promise<string> {
         reject(
           createImageError(
             "CANVAS_CONTEXT_ERROR",
-            "Could not get 2D context for cropping."
-          )
+            "Could not get 2D context for cropping.",
+          ),
         );
         return;
       }
@@ -233,7 +233,7 @@ export function cropImage(dataUrl: string, cropBox: CropBox): Promise<string> {
         0,
         0,
         cropBox.width,
-        cropBox.height
+        cropBox.height,
       );
       resolve(canvas.toDataURL("image/png"));
     };
@@ -242,8 +242,8 @@ export function cropImage(dataUrl: string, cropBox: CropBox): Promise<string> {
       reject(
         createImageError(
           "IMAGE_LOAD_ERROR",
-          "Failed to load image for cropping."
-        )
+          "Failed to load image for cropping.",
+        ),
       );
     };
 
@@ -252,12 +252,12 @@ export function cropImage(dataUrl: string, cropBox: CropBox): Promise<string> {
 }
 
 export function validateImageDataUrl(
-  dataUrl: string
+  dataUrl: string,
 ): Promise<ImageDimensions> {
   return new Promise<ImageDimensions>((resolve, reject) => {
     if (!dataUrl.startsWith("data:image/")) {
       reject(
-        createImageError("INVALID_DIMENSIONS", "Invalid data URL format.")
+        createImageError("INVALID_DIMENSIONS", "Invalid data URL format."),
       );
       return;
     }
@@ -271,7 +271,10 @@ export function validateImageDataUrl(
 
     img.onerror = (): void => {
       reject(
-        createImageError("IMAGE_LOAD_ERROR", "Invalid or corrupted image data.")
+        createImageError(
+          "IMAGE_LOAD_ERROR",
+          "Invalid or corrupted image data.",
+        ),
       );
     };
 

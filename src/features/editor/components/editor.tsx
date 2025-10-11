@@ -70,7 +70,7 @@ export const Editor = ({ initialData }: EditorProps) => {
         }, 100);
       }
     },
-    [setActiveTool]
+    [setActiveTool],
   );
 
   // Refs

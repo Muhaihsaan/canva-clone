@@ -4,7 +4,7 @@ import type { RgbaColor } from "@uiw/react-color";
 import type { LayerObjectData, SerializedFabricObject } from "./types";
 
 type TextObjectData = LayerObjectData & {
-  objects?: TextObjectData[]; 
+  objects?: TextObjectData[];
 };
 
 export function transformText(objects: TextObjectData[] | undefined) {
@@ -155,7 +155,7 @@ import { FabricObjectWithLayer } from "./types";
 export function tagFabricObjectWithLayer(
   obj: fabric.Object,
   layerId: string,
-  objectId?: string
+  objectId?: string,
 ): void {
   const layerObj = obj as FabricObjectWithLayer;
   layerObj.layerId = layerId;
@@ -165,13 +165,13 @@ export function tagFabricObjectWithLayer(
 }
 
 export function getLayerIdFromFabricObject(
-  obj: fabric.Object
+  obj: fabric.Object,
 ): string | undefined {
   return (obj as FabricObjectWithLayer).layerId;
 }
 
 export function getObjectIdFromFabricObject(
-  obj: fabric.Object
+  obj: fabric.Object,
 ): string | undefined {
   return (obj as FabricObjectWithLayer).objectId;
 }

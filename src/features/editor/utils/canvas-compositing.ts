@@ -15,7 +15,7 @@ import {
 
 function createCompositingError(
   code: ImageProcessingError["code"],
-  message: string
+  message: string,
 ): ImageProcessingError {
   const error = new Error(message) as ImageProcessingError;
   error.code = code;
@@ -24,68 +24,93 @@ function createCompositingError(
 
 // Type guard functions
 function isPathSegment(segment: unknown): segment is PathSegment {
-  return Array.isArray(segment) &&
-         segment.length > 0 &&
-         typeof segment[0] === 'string' &&
-         ['M', 'L', 'C', 'Q', 'Z', 'z'].includes(segment[0]);
+  return (
+    Array.isArray(segment) &&
+    segment.length > 0 &&
+    typeof segment[0] === "string" &&
+    ["M", "L", "C", "Q", "Z", "z"].includes(segment[0])
+  );
 }
 
 function isFabricPathArray(pathData: unknown): pathData is FabricPathArray {
-  return Array.isArray(pathData) &&
-         pathData.every(segment => isPathSegment(segment));
+  return (
+    Array.isArray(pathData) &&
+    pathData.every((segment) => isPathSegment(segment))
+  );
 }
 
-function hasProperty<T extends string>(obj: object, prop: T): obj is object & Record<T, unknown> {
+function hasProperty<T extends string>(
+  obj: object,
+  prop: T,
+): obj is object & Record<T, unknown> {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-function isSerializedCanvasObjectExtended(obj: unknown): obj is SerializedCanvasObjectExtended {
-  if (typeof obj !== 'object' || obj === null) return false;
+function isSerializedCanvasObjectExtended(
+  obj: unknown,
+): obj is SerializedCanvasObjectExtended {
+  if (typeof obj !== "object" || obj === null) return false;
 
-  if (!hasProperty(obj, 'type') || !hasProperty(obj, 'left') || !hasProperty(obj, 'top')) {
+  if (
+    !hasProperty(obj, "type") ||
+    !hasProperty(obj, "left") ||
+    !hasProperty(obj, "top")
+  ) {
     return false;
   }
 
-  return typeof obj.type === 'string' &&
-         typeof obj.left === 'number' &&
-         typeof obj.top === 'number';
+  return (
+    typeof obj.type === "string" &&
+    typeof obj.left === "number" &&
+    typeof obj.top === "number"
+  );
 }
 
-function hasImageElement(obj: SerializedCanvasObjectExtended): obj is SerializedCanvasObjectExtended & { _element: { src: string } } {
-  return obj._element !== undefined &&
-         typeof obj._element === 'object' &&
-         obj._element !== null &&
-         'src' in obj._element &&
-         typeof obj._element.src === 'string';
+function hasImageElement(
+  obj: SerializedCanvasObjectExtended,
+): obj is SerializedCanvasObjectExtended & { _element: { src: string } } {
+  return (
+    obj._element !== undefined &&
+    typeof obj._element === "object" &&
+    obj._element !== null &&
+    "src" in obj._element &&
+    typeof obj._element.src === "string"
+  );
 }
 
-function addIdToFabricObject(fabricObject: fabric.Object, layerId?: unknown, objectId?: unknown): void {
-  if (layerId && typeof layerId === 'string') {
-    Object.defineProperty(fabricObject, 'layerId', {
+function addIdToFabricObject(
+  fabricObject: fabric.Object,
+  layerId?: unknown,
+  objectId?: unknown,
+): void {
+  if (layerId && typeof layerId === "string") {
+    Object.defineProperty(fabricObject, "layerId", {
       value: layerId,
       writable: true,
       enumerable: true,
-      configurable: true
+      configurable: true,
     });
   }
-  if (objectId && typeof objectId === 'string') {
-    Object.defineProperty(fabricObject, 'objectId', {
+  if (objectId && typeof objectId === "string") {
+    Object.defineProperty(fabricObject, "objectId", {
       value: objectId,
       writable: true,
       enumerable: true,
-      configurable: true
+      configurable: true,
     });
   }
 }
 
-function validateAndConvertObjects(objects: unknown[]): SerializedCanvasObjectExtended[] {
+function validateAndConvertObjects(
+  objects: unknown[],
+): SerializedCanvasObjectExtended[] {
   const validObjects: SerializedCanvasObjectExtended[] = [];
 
   for (const obj of objects) {
     if (isSerializedCanvasObjectExtended(obj)) {
       validObjects.push(obj);
     } else {
-      console.warn('Invalid object found in layer objects array:', obj);
+      console.warn("Invalid object found in layer objects array:", obj);
     }
   }
 
@@ -128,7 +153,7 @@ function pathArrayToString(pathArray: FabricPathArray): string {
 }
 
 async function createFabricObjectsDirectly(
-  objects: SerializedCanvasObjectExtended[]
+  objects: SerializedCanvasObjectExtended[],
 ): Promise<fabric.Object[]> {
   const fabricObjects: fabric.Object[] = [];
 
@@ -186,14 +211,14 @@ async function createFabricObjectsDirectly(
                       reject(new Error("Failed to create image from URL"));
                     }
                   },
-                  { crossOrigin: "anonymous" }
+                  { crossOrigin: "anonymous" },
                 );
-              }
+              },
             );
           } catch (imageError) {
             console.error(
               `[Direct Creation] Failed to create fabric.Image:`,
-              imageError
+              imageError,
             );
 
             // Create a placeholder rectangle as fallback
@@ -255,7 +280,7 @@ async function createFabricObjectsDirectly(
             if (isFabricPathArray(obj.path)) {
               pathString = pathArrayToString(obj.path);
             } else {
-              console.warn('Invalid path array format, skipping path creation');
+              console.warn("Invalid path array format, skipping path creation");
               pathString = "";
             }
           } else if (typeof obj.path === "string") {
@@ -287,7 +312,7 @@ async function createFabricObjectsDirectly(
             } catch (pathError) {
               console.error(
                 `[Direct Creation] Failed to create fabric.Path:`,
-                pathError
+                pathError,
               );
             }
           }
@@ -301,7 +326,7 @@ async function createFabricObjectsDirectly(
     } catch (error) {
       console.error(
         `[Direct Creation] Failed to create ${obj.type} object:`,
-        error
+        error,
       );
     }
   }
@@ -315,15 +340,15 @@ export function getCompositeImage(
   width: number,
   height: number,
   backgroundUrl: string | null,
-  options: CompositeOptions = {}
+  options: CompositeOptions = {},
 ): Promise<string | null> {
   return new Promise<string | null>(async (resolve, reject) => {
     if (!layers || !Array.isArray(layers)) {
       reject(
         createCompositingError(
           "INVALID_DIMENSIONS",
-          "Layers must be a valid array."
-        )
+          "Layers must be a valid array.",
+        ),
       );
       return;
     }
@@ -332,8 +357,8 @@ export function getCompositeImage(
       reject(
         createCompositingError(
           "INVALID_DIMENSIONS",
-          "Width and height must be positive numbers."
-        )
+          "Width and height must be positive numbers.",
+        ),
       );
       return;
     }
@@ -350,7 +375,7 @@ export function getCompositeImage(
         l.isVisible &&
         l.objects &&
         Array.isArray(l.objects) &&
-        l.objects.length > 0
+        l.objects.length > 0,
     );
 
     if (!backgroundUrl && visibleLayersWithObjects.length === 0) {
@@ -380,7 +405,7 @@ export function getCompositeImage(
       for (const layer of visibleLayersWithObjects) {
         if (!layer.objects || !Array.isArray(layer.objects)) {
           console.warn(
-            `[Compositing] Layer ${layer.id} has invalid objects structure`
+            `[Compositing] Layer ${layer.id} has invalid objects structure`,
           );
           continue;
         }
@@ -388,7 +413,7 @@ export function getCompositeImage(
         // Validate and filter out mask paths from the composite image.
         const validObjects = validateAndConvertObjects(layer.objects);
         const objectsToRender = validObjects.filter(
-          (o) => o.type?.toLowerCase() !== "path"
+          (o) => o.type?.toLowerCase() !== "path",
         );
 
         if (objectsToRender.length > 0) {
@@ -399,7 +424,7 @@ export function getCompositeImage(
 
             if (!fabricObjects || fabricObjects.length === 0) {
               console.warn(
-                `[Compositing] No fabric objects created for layer ${layer.id}`
+                `[Compositing] No fabric objects created for layer ${layer.id}`,
               );
               continue;
             }
@@ -412,7 +437,7 @@ export function getCompositeImage(
           } catch (creationError) {
             console.error(
               `[Compositing] Failed to create fabric objects for layer ${layer.id}:`,
-              creationError
+              creationError,
             );
             continue;
           }
@@ -425,13 +450,13 @@ export function getCompositeImage(
     } catch (error) {
       console.error(
         "Failed to create composite image from fabric objects:",
-        error
+        error,
       );
       reject(
         createCompositingError(
           "CANVAS_CONTEXT_ERROR",
-          "Failed to render composite image."
-        )
+          "Failed to render composite image.",
+        ),
       );
     } finally {
       if (tempCanvas) {
@@ -446,20 +471,20 @@ export async function generateMaskFromObjects(
   objects: SerializedCanvasObjectExtended[],
   width: number,
   height: number,
-  options: MaskGenerationOptions = {}
+  options: MaskGenerationOptions = {},
 ): Promise<string> {
   // Input validation
   if (!objects || !Array.isArray(objects)) {
     throw createCompositingError(
       "INVALID_DIMENSIONS",
-      "Objects must be a valid array."
+      "Objects must be a valid array.",
     );
   }
 
   if (width <= 0 || height <= 0) {
     throw createCompositingError(
       "INVALID_DIMENSIONS",
-      "Width and height must be positive numbers."
+      "Width and height must be positive numbers.",
     );
   }
 
@@ -488,11 +513,11 @@ export async function generateMaskFromObjects(
     } catch (creationError) {
       console.error(
         `[Mask Generation] Failed to create fabric objects:`,
-        creationError
+        creationError,
       );
       throw createCompositingError(
         "CANVAS_CONTEXT_ERROR",
-        "Failed to create fabric objects for mask generation."
+        "Failed to create fabric objects for mask generation.",
       );
     }
 
@@ -502,7 +527,7 @@ export async function generateMaskFromObjects(
       fabricObjects.length === 0
     ) {
       console.warn(
-        `[Mask Generation] No fabric objects created, creating empty mask`
+        `[Mask Generation] No fabric objects created, creating empty mask`,
       );
       const dataUrl = tempCanvas.toDataURL({ format: "png", multiplier: 1 });
       return dataUrl;
@@ -522,7 +547,7 @@ export async function generateMaskFromObjects(
         const objMatrix = obj.calcTransformMatrix();
         const newMatrix = fabric.util.multiplyTransformMatrices(
           groupMatrix,
-          objMatrix
+          objMatrix,
         );
         const newOptions = fabric.util.qrDecompose(newMatrix);
 
@@ -559,7 +584,7 @@ export async function generateMaskFromObjects(
     console.error("Failed to generate mask from objects:", error);
     throw createCompositingError(
       "CANVAS_CONTEXT_ERROR",
-      "Failed to generate mask from objects."
+      "Failed to generate mask from objects.",
     );
   } finally {
     if (tempCanvas) {
@@ -573,7 +598,7 @@ function postProcessMask(
   maskDataUrl: string,
   width: number,
   height: number,
-  edgeClearWidth: number
+  edgeClearWidth: number,
 ): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const finalMaskCanvas = document.createElement("canvas");
@@ -585,8 +610,8 @@ function postProcessMask(
       reject(
         createCompositingError(
           "CANVAS_CONTEXT_ERROR",
-          "Could not get 2D context for mask post-processing."
-        )
+          "Could not get 2D context for mask post-processing.",
+        ),
       );
       return;
     }
@@ -610,8 +635,8 @@ function postProcessMask(
       reject(
         createCompositingError(
           "IMAGE_LOAD_ERROR",
-          "Failed to load temporary mask for processing."
-        )
+          "Failed to load temporary mask for processing.",
+        ),
       );
     };
 
@@ -621,7 +646,7 @@ function postProcessMask(
 
 export async function createLayerComposite(
   composite: LayerComposite,
-  options: CompositeOptions = {}
+  options: CompositeOptions = {},
 ): Promise<string | null> {
   const { layers, width, height, backgroundUrl } = composite;
 
@@ -634,7 +659,7 @@ export async function createLayerComposite(
     width,
     height,
     backgroundUrl || null,
-    options
+    options,
   );
 }
 
@@ -644,6 +669,6 @@ export function validateLayersForCompositing(layers: Layer[]): boolean {
   }
 
   return layers.some(
-    (layer) => layer.isVisible && layer.objects && layer.objects.length > 0
+    (layer) => layer.isVisible && layer.objects && layer.objects.length > 0,
   );
 }

@@ -17,7 +17,7 @@ export function Tabs({ value, onValueChange, className, children }: TabsProps) {
   // Only inject props into TabsList, not all children
   const injectedChildren = React.Children.map(children, (child) => {
     if (!React.isValidElement(child)) return child;
-    
+
     // Only inject props into TabsList components
     if (child.type === TabsList) {
       return React.cloneElement(child as React.ReactElement<any>, {
@@ -25,11 +25,13 @@ export function Tabs({ value, onValueChange, className, children }: TabsProps) {
         onValueChange,
       });
     }
-    
+
     return child;
   });
 
-  return <div className={cn("flex flex-col", className)}>{injectedChildren}</div>;
+  return (
+    <div className={cn("flex flex-col", className)}>{injectedChildren}</div>
+  );
 }
 
 /**
@@ -51,14 +53,14 @@ export function TabsList({
   // Only inject props into TabsTrigger components
   const injectedChildren = React.Children.map(children, (child) => {
     if (!React.isValidElement(child)) return child;
-    
+
     if (child.type === TabsTrigger) {
       return React.cloneElement(child, {
         activeValue,
         onValueChange,
       });
     }
-    
+
     return child;
   });
 
@@ -99,7 +101,7 @@ export function TabsTrigger({
         "px-3 py-2 text-sm font-medium rounded-t-md transition-colors",
         isActive
           ? "text-blue-600 border-b-2 border-blue-600 bg-white"
-          : "text-gray-600 hover:text-gray-800"
+          : "text-gray-600 hover:text-gray-800",
       )}
     >
       {children}

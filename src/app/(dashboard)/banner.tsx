@@ -35,7 +35,7 @@ export const Banner = () => {
   const [customWidth, setCustomWidth] = useState(900);
   const [customHeight, setCustomHeight] = useState(1200);
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
-  
+
   const router = useRouter();
   const mutation = useCreateProject();
 
@@ -60,7 +60,7 @@ export const Banner = () => {
     );
   };
 
-  const handlePresetSelect = (preset: typeof PRESET_DIMENSIONS[0]) => {
+  const handlePresetSelect = (preset: (typeof PRESET_DIMENSIONS)[0]) => {
     setCustomWidth(preset.width);
     setCustomHeight(preset.height);
     setSelectedPreset(preset.name);
@@ -88,10 +88,7 @@ export const Banner = () => {
           </p>
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogTrigger asChild>
-              <Button
-                variant="secondary"
-                className="w-[160px]"
-              >
+              <Button variant="secondary" className="w-[160px]">
                 Start creating
                 <ArrowRight className="size-4 ml-2" />
               </Button>
@@ -100,7 +97,7 @@ export const Banner = () => {
               <DialogHeader>
                 <DialogTitle>Create New Project</DialogTitle>
               </DialogHeader>
-              
+
               {/* Project Name Input */}
               <div className="space-y-2">
                 <Label htmlFor="project-name">Project Name</Label>
@@ -140,7 +137,9 @@ export const Banner = () => {
                 <Label>Custom Dimensions</Label>
                 <div className="flex gap-4">
                   <div className="space-y-2 flex-1">
-                    <Label htmlFor="width" className="text-xs">Width</Label>
+                    <Label htmlFor="width" className="text-xs">
+                      Width
+                    </Label>
                     <Input
                       id="width"
                       type="number"
@@ -151,7 +150,9 @@ export const Banner = () => {
                     />
                   </div>
                   <div className="space-y-2 flex-1">
-                    <Label htmlFor="height" className="text-xs">Height</Label>
+                    <Label htmlFor="height" className="text-xs">
+                      Height
+                    </Label>
                     <Input
                       id="height"
                       type="number"

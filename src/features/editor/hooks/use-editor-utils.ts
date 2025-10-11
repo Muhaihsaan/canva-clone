@@ -16,7 +16,7 @@ export function findWorkspace(canvas: fabric.Canvas): FabricWorkspace | null {
 // Center an object on workspace
 export function centerObject(
   canvas: fabric.Canvas,
-  object: fabric.Object
+  object: fabric.Object,
 ): void {
   const workspace = findWorkspace(canvas);
   if (!workspace) return;
@@ -29,7 +29,7 @@ export function centerObject(
 export function createWorkspace(
   canvas: fabric.Canvas,
   width: number,
-  height: number
+  height: number,
 ): FabricWorkspace {
   const workspace = new fabric.Rect({
     width,

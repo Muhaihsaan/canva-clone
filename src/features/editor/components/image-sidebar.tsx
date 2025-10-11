@@ -58,7 +58,7 @@ export const ImageSidebar = ({
     <aside
       className={cn(
         "absolute left-[100px] top-0 bg-white border-r z-[60] w-[360px] h-full flex flex-col shadow-lg",
-        activeTool === "images" ? "visible" : "hidden"
+        activeTool === "images" ? "visible" : "hidden",
       )}
     >
       <ToolSidebarHeader

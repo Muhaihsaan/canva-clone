@@ -78,7 +78,7 @@ export function buildEditor({
 
   const saveImage = (
     format: "png" | "jpg" | "svg",
-    exportMode: "current-layer" | "flattened" = "flattened"
+    exportMode: "current-layer" | "flattened" = "flattened",
   ) => {
     const options = generateSaveOptions();
     canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
@@ -157,7 +157,7 @@ export function buildEditor({
     await transformText(canvasData.objects);
 
     const fileString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(saveData, null, "\t")
+      JSON.stringify(saveData, null, "\t"),
     )}`;
     downloadFile(fileString, "json");
 
@@ -202,7 +202,7 @@ export function buildEditor({
                     o.top === obj.top &&
                     o.type === obj.type
                   );
-                }
+                },
               );
 
               if (objectData && objectData.layerId) {
@@ -312,7 +312,7 @@ export function buildEditor({
 
         targetSectionalLayerId = await storeState.addSectionalLayer(
           activeGlobalLayer.id,
-          `Mask ${Date.now()}`
+          `Mask ${Date.now()}`,
         );
 
         if (targetSectionalLayerId) {
@@ -325,7 +325,7 @@ export function buildEditor({
               {
                 prompt: activeGlobalLayer.sectionalPrompt,
               },
-              false
+              false,
             );
 
             // Clear the temporary sectional prompt from global layer
@@ -334,7 +334,7 @@ export function buildEditor({
               {
                 sectionalPrompt: undefined,
               },
-              false
+              false,
             );
           }
         } else {
@@ -436,7 +436,7 @@ export function buildEditor({
     const tempPaths = canvas
       .getObjects()
       .filter(
-        (obj) => obj.name === "tempDrawingPath" || obj.name === "tempMaskPath"
+        (obj) => obj.name === "tempDrawingPath" || obj.name === "tempMaskPath",
       );
     tempPaths.forEach((path) => canvas.remove(path));
 
@@ -715,7 +715,7 @@ export function buildEditor({
 
       // Check all sectional layers to see if they've been emptied
       const sectionalLayers = layers.filter(
-        (layer) => layer.type === LayerType.Sectional
+        (layer) => layer.type === LayerType.Sectional,
       );
 
       sectionalLayers.forEach((sectionalLayer) => {
@@ -724,11 +724,11 @@ export function buildEditor({
           .filter(
             (obj) =>
               obj.name !== "clip" &&
-              (obj as FabricObjectWithLayer).layerId === sectionalLayer.id
+              (obj as FabricObjectWithLayer).layerId === sectionalLayer.id,
           );
 
         const inpaintingObjects = allLayerObjects.filter((obj) =>
-          isInpaintingObject(obj)
+          isInpaintingObject(obj),
         );
 
         // Delete layer when no inpainting objects remain
@@ -744,7 +744,7 @@ export function buildEditor({
           .filter(
             (obj) =>
               obj.name !== "clip" &&
-              (obj as FabricObjectWithLayer).layerId === activeGlobalLayer.id
+              (obj as FabricObjectWithLayer).layerId === activeGlobalLayer.id,
           );
 
         if (
@@ -919,41 +919,41 @@ export function buildEditor({
               break;
             case "brightness":
               fabricImage.filters.push(
-                new fabric.Image.filters.Brightness({ brightness: 0.1 })
+                new fabric.Image.filters.Brightness({ brightness: 0.1 }),
               );
               break;
             case "contrast":
               fabricImage.filters.push(
-                new fabric.Image.filters.Contrast({ contrast: 0.1 })
+                new fabric.Image.filters.Contrast({ contrast: 0.1 }),
               );
               break;
             case "saturation":
               fabricImage.filters.push(
-                new fabric.Image.filters.Saturation({ saturation: 0.1 })
+                new fabric.Image.filters.Saturation({ saturation: 0.1 }),
               );
               break;
             case "pixelate":
               fabricImage.filters.push(
-                new fabric.Image.filters.Pixelate({ blocksize: 8 })
+                new fabric.Image.filters.Pixelate({ blocksize: 8 }),
               );
               break;
             case "blur":
               fabricImage.filters.push(
-                new fabric.Image.filters.Blur({ blur: 0.1 })
+                new fabric.Image.filters.Blur({ blur: 0.1 }),
               );
               break;
             case "sharpen":
               fabricImage.filters.push(
                 new fabric.Image.filters.Convolute({
                   matrix: [0, -1, 0, -1, 5, -1, 0, -1, 0],
-                })
+                }),
               );
               break;
             case "emboss":
               fabricImage.filters.push(
                 new fabric.Image.filters.Convolute({
                   matrix: [1, 1, 1, 1, 0.7, -1, -1, -1, -1],
-                })
+                }),
               );
               break;
             case "blacknwhite":
@@ -962,7 +962,7 @@ export function buildEditor({
               break;
             case "huerotate":
               fabricImage.filters.push(
-                new fabric.Image.filters.HueRotation({ rotation: 0.1 })
+                new fabric.Image.filters.HueRotation({ rotation: 0.1 }),
               );
               break;
             case "blendcolor":
@@ -970,12 +970,12 @@ export function buildEditor({
                 new fabric.Image.filters.BlendColor({
                   color: "#FF0000",
                   mode: "multiply",
-                })
+                }),
               );
               break;
             case "vibrance":
               fabricImage.filters.push(
-                new fabric.Image.filters.Saturation({ saturation: 0.2 })
+                new fabric.Image.filters.Saturation({ saturation: 0.2 }),
               );
               break;
             case "none":

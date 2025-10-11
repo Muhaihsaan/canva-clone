@@ -18,7 +18,7 @@ interface UseCanvasEventsProps {
 }
 
 const isSelectionEvent = (
-  opt: fabric.IEvent
+  opt: fabric.IEvent,
 ): opt is fabric.IEvent & { selected?: fabric.Object[] } => {
   return "selected" in opt;
 };
@@ -238,7 +238,7 @@ export const useCanvasEvents = ({
                 tagFabricObjectWithLayer(
                   newObject,
                   newSectionalLayerId,
-                  objectId
+                  objectId,
                 );
 
                 // Serialize the object
@@ -247,7 +247,7 @@ export const useCanvasEvents = ({
                 const operation = createOperation(
                   "ADD_OBJECT",
                   { layerId: newSectionalLayerId, objectData, objectId },
-                  { layerId: newSectionalLayerId, objectId }
+                  { layerId: newSectionalLayerId, objectId },
                 );
 
                 await executeOperation(operation);
@@ -279,7 +279,7 @@ export const useCanvasEvents = ({
           const operation = createOperation(
             "ADD_OBJECT",
             { layerId, objectData, objectId },
-            { layerId, objectId }
+            { layerId, objectId },
           );
 
           // Check if there's an active transaction
@@ -348,7 +348,7 @@ export const useCanvasEvents = ({
             objectId,
             changes: beforeState,
             previousValues: afterState,
-          }
+          },
         );
 
         await executeOperation(operation);
@@ -371,7 +371,7 @@ export const useCanvasEvents = ({
       const operation = createOperation(
         "REMOVE_OBJECT",
         { layerId, objectId },
-        { layerId, objectId, objectData }
+        { layerId, objectId, objectData },
       );
 
       await executeOperation(operation);

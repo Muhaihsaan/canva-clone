@@ -61,7 +61,7 @@ const getCanvasObjectData = (canvas: fabric.Canvas | null, layerId: string) => {
 // Create snapshot from current Zustand state
 export const createSnapshot = (
   layers: Layer[],
-  canvas: fabric.Canvas | null
+  canvas: fabric.Canvas | null,
 ): EditorSnapshot => {
   const canvasWidth = canvas?.width || 800;
   const canvasHeight = canvas?.height || 600;
@@ -107,7 +107,7 @@ export const validateSnapshot = (data: any): data is EditorSnapshot => {
     (layer: any) =>
       typeof layer.id === "string" &&
       typeof layer.name === "string" &&
-      typeof layer.visible === "boolean"
+      typeof layer.visible === "boolean",
   );
 };
 
@@ -115,7 +115,7 @@ export const validateSnapshot = (data: any): data is EditorSnapshot => {
 const STORAGE_KEY = "project_snapshot";
 
 export const saveToLocalStorage = async (
-  snapshot: EditorSnapshot
+  snapshot: EditorSnapshot,
 ): Promise<boolean> => {
   return new Promise((resolve) => {
     try {
@@ -179,8 +179,8 @@ export const restoreSnapshot = async (
   canvas: fabric.Canvas,
   updateLayerStore: (
     layers: Layer[],
-    canvasConfig: { width: number; height: number; backgroundColor: string }
-  ) => void
+    canvasConfig: { width: number; height: number; backgroundColor: string },
+  ) => void,
 ): Promise<boolean> => {
   return new Promise((resolve) => {
     try {
@@ -225,7 +225,7 @@ export const restoreSnapshot = async (
 
       // Sort layers by zIndex to restore in correct order
       const sortedLayers = [...snapshot.layers].sort(
-        (a, b) => a.zIndex - b.zIndex
+        (a, b) => a.zIndex - b.zIndex,
       );
 
       let loadedCount = 0;
@@ -284,7 +284,7 @@ export const restoreSnapshot = async (
           },
           {
             crossOrigin: "anonymous",
-          }
+          },
         );
       });
     } catch (error) {
